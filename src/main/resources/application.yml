@@ -18,7 +18,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI:${AUTH_SERVER_URL:http://localhost:8083}}
+          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:http://localhost:8083}/.well-known/jwks.json}
   cloud:
     gateway:
       httpserver:
@@ -46,15 +46,11 @@ management:
         enabled: true
 
 logging:
-  pattern:
-    console: "${LOG_PATTERN_CONSOLE:%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n}"
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
     com.capo.api_gateway: ${LOGGING_LEVEL_APP:INFO}
-    org.springframework.cloud.gateway: ${LOGGING_LEVEL_GATEWAY:INFO}
-    org.springframework.security: ${LOGGING_LEVEL_SECURITY:INFO}
-    org.springframework.http.server.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
-    org.springframework.web.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
-    reactor.netty: ${LOGGING_LEVEL_NETTY:INFO}
-    reactor.netty.http.server.HttpServerOperations: TRACE
-    reactor.netty.channel.FluxReceive: TRACE
+    org.springframework.cloud.gateway: INFO
+    org.springframework.security: INFO
+    org.springframework.http.server.reactive: INFO
+    org.springframework.web.reactive: INFO
+    reactor.netty: INFO
