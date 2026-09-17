@@ -49,8 +49,10 @@ logging:
   level:
     root: ${LOGGING_LEVEL_ROOT:INFO}
     com.capo.api_gateway: ${LOGGING_LEVEL_APP:INFO}
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.security: INFO
     org.springframework.http.server.reactive: INFO
     org.springframework.web.reactive: INFO
     reactor.netty: INFO
+    reactor.netty.http.server.HttpServer: DEBUG
+    reactor.netty.http.client.HttpClient: DEBUG
