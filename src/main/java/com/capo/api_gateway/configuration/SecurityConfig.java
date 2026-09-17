@@ -1,7 +1,9 @@
 package com.capo.api_gateway.configuration;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,6 +18,9 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+
+	@Value("${cors.allowed-origins:http://localhost:4200}")
+	private String allowedOrigins;
 	
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -27,7 +32,9 @@ public class SecurityConfig {
             .pathMatchers("/actuator/health", 
             	    "/public/**", 
             	    "/oauth2/**", 
+            	    "/login", 
             	    "/login/**", 
+            	    "/register", 
             	    "/register/**", 
             	    "/.well-known/**").permitAll() // Public paths
             .anyExchange().authenticated() // All routed microservice requests require auth
@@ -40,7 +47,11 @@ public class SecurityConfig {
 	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

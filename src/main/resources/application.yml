@@ -1,35 +1,55 @@
 server:
-  port: 8082
+  port: ${PORT:8082}
+  forward-headers-strategy: framework
+  shutdown: graceful
+
 spring:
   application:
     name: api_gateway
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      username: ${REDIS_USERNAME:}
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
   session:
     store-type: redis
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8083 # Your Authorization Server URL
+          issuer-uri: ${ISSUER_URI:${AUTH_SERVER_URL:http://localhost:8083}}
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 3000
+        response-timeout: 5s
       server:
         webflux:
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
           routes:
             - id: authorization-server
-              uri: http://localhost:8083
+              uri: ${AUTH_SERVER_URL:http://localhost:8083}
               predicates:
                 - Path=/oauth2/**, /login, /login/**, /register, /register/**, /userinfo, /userinfo/**, /.well-known/**
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.ipc.netty: DEBUG
-    reactor.netty: DEBUG
+    org.springframework.cloud.gateway: ${LOGGING_LEVEL_GATEWAY:INFO}
+    org.springframework.http.server.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
+    org.springframework.web.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
+    reactor.ipc.netty: ${LOGGING_LEVEL_NETTY:INFO}
+    reactor.netty: ${LOGGING_LEVEL_NETTY:INFO}
