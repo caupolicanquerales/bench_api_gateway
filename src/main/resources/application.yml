@@ -14,8 +14,6 @@ spring:
       password: ${REDIS_PASSWORD:}
       ssl:
         enabled: ${REDIS_SSL_ENABLED:false}
-  session:
-    store-type: redis
   security:
     oauth2:
       resourceserver:
@@ -27,17 +25,15 @@ spring:
         wiretap: true
       httpclient:
         wiretap: true
-        connect-timeout: 3000
+        connect-timeout: 3000ms
         response-timeout: 5s
-      server:
-        webflux:
-          default-filters:
-            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
-          routes:
-            - id: authorization-server
-              uri: ${AUTH_SERVER_URL:http://localhost:8083}
-              predicates:
-                - Path=/oauth2/**, /login, /login/**, /register, /register/**, /userinfo, /userinfo/**, /.well-known/**
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+        - id: authorization-server
+          uri: ${AUTH_SERVER_URL:http://localhost:8083}
+          predicates:
+            - Path=/oauth2/**, /login, /login/**, /register, /register/**, /userinfo, /userinfo/**, /.well-known/**
 
 management:
   endpoints:
@@ -59,5 +55,6 @@ logging:
     org.springframework.security: ${LOGGING_LEVEL_SECURITY:INFO}
     org.springframework.http.server.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
     org.springframework.web.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
-    reactor.ipc.netty: ${LOGGING_LEVEL_NETTY:INFO}
     reactor.netty: ${LOGGING_LEVEL_NETTY:INFO}
+    reactor.netty.http.server.HttpServerOperations: TRACE
+    reactor.netty.channel.FluxReceive: TRACE
