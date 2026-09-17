@@ -23,7 +23,10 @@ spring:
           issuer-uri: ${ISSUER_URI:${AUTH_SERVER_URL:http://localhost:8083}}
   cloud:
     gateway:
+      httpserver:
+        wiretap: true
       httpclient:
+        wiretap: true
         connect-timeout: 3000
         response-timeout: 5s
       server:
@@ -47,8 +50,13 @@ management:
         enabled: true
 
 logging:
+  pattern:
+    console: "${LOG_PATTERN_CONSOLE:%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n}"
   level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    com.capo.api_gateway: ${LOGGING_LEVEL_APP:INFO}
     org.springframework.cloud.gateway: ${LOGGING_LEVEL_GATEWAY:INFO}
+    org.springframework.security: ${LOGGING_LEVEL_SECURITY:INFO}
     org.springframework.http.server.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
     org.springframework.web.reactive: ${LOGGING_LEVEL_REACTIVE:INFO}
     reactor.ipc.netty: ${LOGGING_LEVEL_NETTY:INFO}
