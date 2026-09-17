@@ -10,22 +10,44 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:http://localhost:8083}/.well-known/jwks.json}
+          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:http://localhost:8083}/oauth2/jwks}
   cloud:
     gateway:
-      httpserver:
-        wiretap: true
-      httpclient:
-        wiretap: true
-        connect-timeout: 3000ms
-        response-timeout: 5s
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
-      routes:
-        - id: authorization-server
-          uri: ${AUTH_SERVER_URL:http://localhost:8083}
-          predicates:
-            - Path=/oauth2/**, /login, /login/**, /register, /register/**, /userinfo, /userinfo/**, /.well-known/**
+      server:
+        webflux:
+          httpserver:
+            wiretap: true
+          httpclient:
+            wiretap: true
+            connect-timeout: 3000
+            response-timeout: 5s
+          # Global CORS Configuration for Frontend (Angular)
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - "http://localhost:4200"
+                  - "https://bench-frontend.onrender.com"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: true
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+          routes:
+            - id: auth-server-well-known
+              uri: ${AUTH_SERVER_URL:http://localhost:8083}
+              predicates:
+                - Path=/.well-known/openid-configuration, /.well-known/jwks.json, /.well-known/**
+            - id: authorization-server
+              uri: ${AUTH_SERVER_URL:http://localhost:8083}
+              predicates:
+                - Path=/oauth2/**, /login/**, /register/**, /userinfo/**
 
 management:
   endpoints:

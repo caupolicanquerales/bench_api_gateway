@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -21,6 +20,9 @@ public class SecurityConfig {
 
 	@Value("${cors.allowed-origins:http://localhost:4200}")
 	private String allowedOrigins;
+	
+	@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+	private String jwkSetUri;
 	
 	@Bean
 	public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -39,7 +41,9 @@ public class SecurityConfig {
             	    "/.well-known/**").permitAll() // Public paths
             .anyExchange().authenticated() // All routed microservice requests require auth
         )
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwkSetUri(jwkSetUri))
+            );
 
 		return http.build();
 	}
