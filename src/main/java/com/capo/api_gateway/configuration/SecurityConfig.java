@@ -38,6 +38,8 @@ public class SecurityConfig {
             	    "/login/**", 
             	    "/register", 
             	    "/register/**", 
+            	    "/logout", 
+            	    "/logout/**", 
             	    "/.well-known/**").permitAll() // Public paths
             .anyExchange().authenticated() // All routed microservice requests require auth
         )

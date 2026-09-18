@@ -51,7 +51,7 @@ spring:
             - id: authorization-server
               uri: ${AUTH_SERVER_URL:http://localhost:8083}
               predicates:
-                - Path=/oauth2/**, /login/**, /register/**, /userinfo/**
+                - Path=/oauth2/**, /login, /login/**, /register, /register/**, /logout, /logout/**, /userinfo/**
 
 management:
   endpoints:
