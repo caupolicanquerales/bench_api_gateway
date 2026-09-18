@@ -18,7 +18,7 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-	@Value("${cors.allowed-origins:http://localhost:4200}")
+	@Value("${cors.allowed-origins:http://localhost:4200,https://bench-frontend.onrender.com}")
 	private String allowedOrigins;
 	
 	@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
@@ -55,7 +55,10 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
-        config.setAllowedOrigins(origins);
+        config.setAllowedOriginPatterns(List.of("http://localhost:*", "https://*.onrender.com"));
+        for (String origin : origins) {
+            config.addAllowedOrigin(origin);
+        }
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
