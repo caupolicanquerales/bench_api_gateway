@@ -1,5 +1,6 @@
 package com.capo.api_gateway.configuration;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,10 +58,11 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
-        config.setAllowedOriginPatterns(List.of("http://localhost:*", "https://*.onrender.com"));
-        for (String origin : origins) {
-            config.addAllowedOrigin(origin);
-        }
+
+        List<String> patterns = new ArrayList<>(List.of("http://localhost:*", "https://*.onrender.com"));
+        patterns.addAll(origins);
+
+        config.setAllowedOriginPatterns(patterns);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

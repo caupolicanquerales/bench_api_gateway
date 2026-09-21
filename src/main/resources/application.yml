@@ -13,7 +13,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:http://localhost:8083}/oauth2/jwks}
+          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:https://bench-oauth-server.onrender.com}/oauth2/jwks}
   cloud:
     gateway:
       server:
@@ -24,23 +24,6 @@ spring:
             wiretap: true
             connect-timeout: 3000
             response-timeout: 5s
-          # Global CORS Configuration for Frontend (Angular)
-          globalcors:
-            add-to-simple-url-handler-mapping: true
-            cors-configurations:
-              '[/**]':
-                allowed-origin-patterns:
-                  - "http://localhost:*"
-                  - "https://*.onrender.com"
-                  - "${FRONTEND_URL:https://bench-frontend.onrender.com}"
-                allowedMethods:
-                  - GET
-                  - POST
-                  - PUT
-                  - DELETE
-                  - OPTIONS
-                allowedHeaders: "*"
-                allowCredentials: true
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
           routes:
