@@ -13,7 +13,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:https://bench-oauth-server.onrender.com}/oauth2/jwks}
+          jwk-set-uri: ${JWK_SET_URI:${AUTH_SERVER_URL:http://localhost:8083}/oauth2/jwks}
   cloud:
     gateway:
       server:
@@ -22,8 +22,8 @@ spring:
             wiretap: true
           httpclient:
             wiretap: true
-            connect-timeout: 3000
-            response-timeout: 5s
+            connect-timeout: 10000
+            response-timeout: 120s
           default-filters:
             - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
           routes:
@@ -35,6 +35,10 @@ spring:
               uri: ${AUTH_SERVER_URL:http://localhost:8083}
               predicates:
                 - Path=/oauth2/**, /login, /login/**, /register, /register/**, /logout, /logout/**, /userinfo/**
+            - id: garmin-processor-server
+              uri: ${GARMIN_SERVER_URL:http://localhost:8084}
+              predicates:
+                - Path=/garmin-file/**, /garmin-data/**
 
 management:
   endpoints:
